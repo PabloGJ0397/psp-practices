@@ -1,0 +1,34 @@
+PRÁCTICA 5 · SERVICIO EN ANDROID · VERSIÓN JAVA  (apuntes UT-1, apartado 7)
+
+Es la misma práctica que android_servicio (Kotlin). La única diferencia importante es la
+pantalla: Jetpack Compose solo se puede usar desde Kotlin, así que en Java la pantalla se
+hace con Views (plantilla "Empty Views Activity").
+
+1. En Android Studio crea un proyecto nuevo "Empty Views Activity":
+     Name: ServicioPSP        Package name: es.dam.psp.ut1
+     Language: Java           Minimum SDK: API 26
+2. Crea el paquete es.dam.psp.ut1.servicio y copia dentro DescargaService.java.
+3. En AndroidManifest.xml añade:
+     - Dentro de <manifest>, antes de <application>:
+         <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+         <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+         <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+     - Dentro de <application>:
+         <service
+             android:name=".servicio.DescargaService"
+             android:exported="false"
+             android:foregroundServiceType="dataSync" />
+4. En MainActivity crea una pantalla con el PID de la actividad (android.os.Process.myPid())
+   y dos botones (TextView y Button dentro de un LinearLayout vertical, en activity_main.xml
+   o creados desde el código):
+     Iniciar -> ContextCompat.startForegroundService(this, new Intent(this, DescargaService.class))
+     Parar   -> stopService(new Intent(this, DescargaService.class))
+   En Android 13 o superior pide el permiso POST_NOTIFICATIONS al arrancar
+   (registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedido -> { })
+    y después lanzador.launch(Manifest.permission.POST_NOTIFICATIONS)).
+5. Completa los TODO 5.b de DescargaService.java.
+
+Para ver los procesos del emulador desde la terminal (adb está en <SDK>/platform-tools):
+    adb shell "ps -A | grep psp"      (las comillas hacen que grep se ejecute dentro del emulador)
+    adb shell dumpsys activity services es.dam.psp.ut1
+Para ver el log: pestaña Logcat de Android Studio, filtro  tag:PSP-UT1

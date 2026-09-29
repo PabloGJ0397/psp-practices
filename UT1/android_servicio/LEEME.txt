@@ -1,0 +1,27 @@
+PRÁCTICA 5 · SERVICIO EN ANDROID  (apuntes UT-1, apartado 7)
+
+1. En Android Studio crea un proyecto nuevo "Empty Activity" (Compose):
+     Name: ServicioPSP        Package name: es.dam.psp.ut1        Minimum SDK: API 26
+2. Crea el paquete es.dam.psp.ut1.servicio y copia dentro DescargaService.kt.
+3. En AndroidManifest.xml añade:
+     - Dentro de <manifest>, antes de <application>:
+         <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+         <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+         <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+     - Dentro de <application>:
+         <service
+             android:name=".servicio.DescargaService"
+             android:exported="false"
+             android:foregroundServiceType="dataSync" />
+4. En MainActivity crea una pantalla con el PID de la actividad (android.os.Process.myPid())
+   y dos botones:
+     Iniciar -> ContextCompat.startForegroundService(context, Intent(context, DescargaService::class.java))
+     Parar   -> context.stopService(Intent(context, DescargaService::class.java))
+   En Android 13 o superior pide el permiso POST_NOTIFICATIONS al arrancar
+   (rememberLauncherForActivityResult + ActivityResultContracts.RequestPermission()).
+5. Completa los TODO 5.b de DescargaService.kt.
+
+Para ver los procesos del emulador desde la terminal (adb está en <SDK>/platform-tools):
+    adb shell "ps -A | grep psp"      (las comillas hacen que grep se ejecute dentro del emulador)
+    adb shell dumpsys activity services es.dam.psp.ut1
+Para ver el log: pestaña Logcat de Android Studio, filtro  tag:PSP-UT1
