@@ -33,7 +33,9 @@ const val CLASE_HIJO = "es.dam.psp.ut1.practicas.ContadorKt"   // main de Contad
  * Pista: Jvm.proceso(...) y redirectInput(...). Hereda la salida de error del hijo.
  */
 fun lanzarContador(fichero: File): Process {
-    TODO("Práctica 4.a")   // TODO 4.a
+    val procesoHijo =
+        Jvm.proceso(CLASE_HIJO).redirectInput(fichero).redirectError(ProcessBuilder.Redirect.INHERIT).start()
+    return procesoHijo
 }
 
 /**
@@ -41,17 +43,31 @@ fun lanzarContador(fichero: File): Process {
  * Si el código de salida no es 0, lanza una IllegalStateException con un mensaje claro.
  */
 fun recogerResultado(fichero: File, hijo: Process): Resultado {
-    TODO("Práctica 4.b")   // TODO 4.b
+    val linea = hijo.inputStream.bufferedReader().readLine()
+    val codigo = hijo.waitFor()
+    if (codigo != 0) {
+        throw IllegalStateException("El hijo falló con el fichero ${fichero.name}, código $codigo")
+    }
+    val partes = linea.split(";")
+    val resultado = Resultado(fichero.name, partes[0].toLong(), partes[1].toLong(), partes[2].toLong(), partes[3])
+    return resultado
 }
 
 /** Procesa los ficheros uno detrás de otro: lanzar, esperar, lanzar, esperar... */
 fun secuencial(ficheros: List<File>): List<Resultado> {
-    TODO("Práctica 4.c")   // TODO 4.c
+    val resultados = mutableListOf<Resultado>()
+    ficheros.forEach { fichero ->
+        val procesoEnCurso = lanzarContador(fichero)
+        val resultado = recogerResultado(fichero, procesoEnCurso)
+        resultados.add(resultado)
+    }
+    return resultados
 }
 
 /** Lanza TODOS los hijos a la vez y después recoge los resultados. */
 fun concurrente(ficheros: List<File>): List<Resultado> {
-    TODO("Práctica 4.d")   // TODO 4.d
+    val procesos = ficheros.map { fichero -> lanzarContador(fichero) }
+    return ficheros.mapIndexed { posicion, fichero -> recogerResultado(fichero, procesos[posicion]) }
 }
 
 fun main() {
@@ -63,15 +79,34 @@ fun main() {
     }
     println("Procesadores disponibles: ${Runtime.getRuntime().availableProcessors()}")
 
-    lateinit var r1: List<Resultado>          // se asignan dentro de measureTime { }
+    lateinit var r1: List<Resultado>           // se asignan dentro de measureTime { }
     lateinit var r2: List<Resultado>
     val t1 = measureTime { r1 = secuencial(ficheros) }
     val t2 = measureTime { r2 = concurrente(ficheros) }
 
-    // TODO 4.e: muestra una tabla con el resultado de cada fichero y una fila TOTAL
-    //  (líneas, palabras y caracteres sumados). Comprueba que r1 y r2 coinciden.
+    println("%-12s %10s %10s %12s  %s".format("FICHERO", "LINEAS", "PALABRAS", "CARACTERES", "MAS FRECUENTE"))
+
+    r1.forEach { r ->
+        println(
+            "%-12s %10s %10s %12s  %s".format(
+                r.fichero,
+                r.lineas,
+                r.palabras,
+                r.caracteres,
+                r.masFrecuente
+            )
+        )
+    }
+    val totalLineas = r1.sumOf { it.lineas }
+    val totalPalabras = r1.sumOf { it.palabras }
+    val totalCaracteres = r1.sumOf { it.caracteres }
+
+    println("-".repeat(50))
+    println("%-12s %10s %10s %12s  %s".format("TOTAL", totalLineas, totalPalabras, totalCaracteres, ""))
+    println("¿Resultados iguales? ${r1 == r2}")
 
     println("Secuencial:  $t1")
     println("Concurrente: $t2")
+
     // Práctica 4.f: ejecútalo tres veces y calcula la aceleración t1 / t2
 }
