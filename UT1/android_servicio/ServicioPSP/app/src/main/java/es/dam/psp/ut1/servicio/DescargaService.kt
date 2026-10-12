@@ -142,7 +142,7 @@ class DescargaService : Service() {
 
     // notificacion(progreso): construye y devuelve una Notification con la barra en ese porcentaje.
     private fun notificacion(progreso: Int): Notification =
-    // NotificationCompat.Builder(contexto, canal): "constructor" de la notificación. Cada método
+        // NotificationCompat.Builder(contexto, canal): "constructor" de la notificación. Cada método
         // siguiente añade una propiedad y devuelve el mismo Builder, por eso se encadenan.
         NotificationCompat.Builder(this, CANAL)
             .setSmallIcon(android.R.drawable.stat_sys_download)
@@ -160,7 +160,6 @@ class DescargaService : Service() {
     companion object {
         const val TAG = "PSP-UT1"          // etiqueta para filtrar en Logcat (tag:PSP-UT1)
         const val CANAL = "descargas"      // id del canal de notificaciones
-        const val ID_NOTIFICACION =
-            1      // id de la notificación (el mismo en startForeground y notify)
+        const val ID_NOTIFICACION = 1      // id de la notificación (el mismo en startForeground y notify)
     }
 }
