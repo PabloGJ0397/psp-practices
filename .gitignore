@@ -1,0 +1,8 @@
+# Configuración local del IDE (cada uno tiene la suya)
+.idea/
+# Salida compilada de IntelliJ y de Gradle
+out/
+build/
+.gradle/
+# Archivos de historial que genera el lanzador de la P3
+historial.txt
