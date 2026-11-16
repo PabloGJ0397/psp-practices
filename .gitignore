@@ -6,3 +6,5 @@ build/
 .gradle/
 # Archivos de historial que genera el lanzador de la P3
 historial.txt
+# Ficheros de módulo que IntelliJ genera solo (Gradle los regenera)
+*.iml
