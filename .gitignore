@@ -8,3 +8,8 @@ build/
 historial.txt
 # Ficheros de módulo que IntelliJ genera solo (Gradle los regenera)
 *.iml
+
+# Wrapper de Gradle de UT2/hilos: lo genera IntelliJ al abrir el proyecto
+UT2/hilos/gradlew
+UT2/hilos/gradlew.bat
+UT2/hilos/gradle/wrapper/
